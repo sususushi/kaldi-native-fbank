@@ -30,7 +30,8 @@
 #include "kaldi-native-fbank/csrc/log.h"
 
 namespace knf {
-
+//回收向量 
+// 要保留的元素数量
 RecyclingVector::RecyclingVector(int32_t items_to_hold)
     : items_to_hold_(items_to_hold == 0 ? -1 : items_to_hold),
       first_available_index_(0) {}
