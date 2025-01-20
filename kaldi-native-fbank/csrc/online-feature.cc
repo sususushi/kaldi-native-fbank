@@ -31,12 +31,14 @@
 
 namespace knf {
 //回收向量 
-// 要保留的元素数量
+//要保留的元素数量
 RecyclingVector::RecyclingVector(int32_t items_to_hold)
     : items_to_hold_(items_to_hold == 0 ? -1 : items_to_hold),
       first_available_index_(0) {}
 
 const float *RecyclingVector::At(int32_t index) const {
+  // 若 index 小于 first_available_index_，则记录致命错误日志。
+  // 试图检索已被 RecyclingVector 删除的特征向量
   if (index < first_available_index_) {
     KNF_LOG(FATAL) << "Attempted to retrieve feature vector that was "
                       "already removed by the RecyclingVector (index = "
@@ -51,6 +53,7 @@ const float *RecyclingVector::At(int32_t index) const {
 
 void RecyclingVector::PushBack(std::vector<float> item) {
   // Note: -1 is a larger number when treated as unsigned
+  // 注意：当将 -1 视为无符号数时，它将是一个较大的数字
   if (items_.size() == static_cast<size_t>(items_to_hold_)) {
     items_.pop_front();
     ++first_available_index_;
