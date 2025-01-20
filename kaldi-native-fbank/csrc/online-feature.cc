@@ -54,18 +54,20 @@ const float *RecyclingVector::At(int32_t index) const {
 void RecyclingVector::PushBack(std::vector<float> item) {
   // Note: -1 is a larger number when treated as unsigned
   // 注意：当将 -1 视为无符号数时，它将是一个较大的数字
+  // 若存储的元素数量达到 items_to_hold_，则移除最前面的元素并更新 first_available_index_
   if (items_.size() == static_cast<size_t>(items_to_hold_)) {
     items_.pop_front();
     ++first_available_index_;
   }
   items_.push_back(std::move(item));
 }
-
+// 返回存储的元素数量，包括已经移除的元素。
 int32_t RecyclingVector::Size() const {
   return first_available_index_ + static_cast<int32_t>(items_.size());
 }
 
 // discard the first n frames
+// 移除存储容器中的前 n 个元素。
 void RecyclingVector::Pop(int32_t n) {
   for (int32_t i = 0; i < n && !items_.empty(); ++i) {
     items_.pop_front();
@@ -73,6 +75,8 @@ void RecyclingVector::Pop(int32_t n) {
   }
 }
 
+
+// OnlineGenericBaseFeature 类的构造函数，用于初始化成员变量。
 template <class C>
 OnlineGenericBaseFeature<C>::OnlineGenericBaseFeature(
     const typename C::Options &opts)
